@@ -5,7 +5,7 @@ require_once __DIR__ . '/../g2k-plugin/g2k-settings.php';
 /**
  * Class WP_Varnish_Settings
  *
- * @property array settings
+ * @property string[] server_ips
  */
 class WP_Varnish_Settings extends G2K_Settings {
 	const REQUIRED_CAPABILITY = 'administrator';
@@ -53,5 +53,20 @@ class WP_Varnish_Settings extends G2K_Settings {
 				'ip' => '',
 			),
 		);
+	}
+
+	public function __get($name) {
+		if ($name === 'server_ips') {
+			$serverIPs = $this->settings['server']['ip'];
+			$serverIPs = explode(',', $serverIPs);
+
+			foreach ($serverIPs as &$serverIP) {
+				$serverIP = trim($serverIP);
+			}
+
+			return $serverIPs;
+		}
+
+		return parent::__get($name);
 	}
 }
