@@ -11,8 +11,7 @@ class WP_Varnish_Settings extends G2K_Settings {
 	const REQUIRED_CAPABILITY = 'administrator';
 
 	public function register_settings_pages() {
-		add_menu_page('WP Varnish', 'WP Varnish', static::REQUIRED_CAPABILITY, $this->_plugin->prefix . '_settings', array($this, 'viewMainPage'));
-		add_submenu_page($this->_plugin->prefix . '_settings', 'Selective Purge', 'Selective Purge', static::REQUIRED_CAPABILITY, $this->_plugin->prefix . '_settings_purge', array($this, 'viewPurgePage'));
+		add_submenu_page('options-general.php', $this->_plugin->name . ' Settings', $this->_plugin->name, static::REQUIRED_CAPABILITY, $this->_plugin->prefix . '_settings', array($this, 'viewMainPage'));
 	}
 
 	public function viewMainPage() {
