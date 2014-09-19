@@ -12,10 +12,15 @@ class WP_Varnish extends G2K_Plugin {
 	 * @var WP_Varnish_Settings
 	 */
 	protected $_settings;
+	/**
+	 * @var WP_Varnish_Admin_Bar
+	 */
+	protected $_admin_bar;
 
 	protected static $instance;
 
 	public function __construct() {
 		$this->_settings = new WP_Varnish_Settings($this);
+		$this->_admin_bar = new WP_Varnish_Admin_Bar($this);
 	}
 }
