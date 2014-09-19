@@ -1,0 +1,3 @@
+[submodule "g2k-plugin"]
+	path = g2k-plugin
+	url = https://github.com/Graffiti2000Srl/g2k-plugin.git
