@@ -2,8 +2,10 @@
 
 require_once __DIR__ . '/../g2k-plugin/g2k-plugin.php';
 require_once __DIR__ . '/wpva-settings.php';
+require_once __DIR__ . '/wpva-admin-bar.php';
 
 class WP_Varnish extends G2K_Plugin {
+	public $name = 'WP Varnish';
 	public $slug = 'wp-varnish';
 	public $prefix = 'wpva';
 	public $version = '0.0.1';
