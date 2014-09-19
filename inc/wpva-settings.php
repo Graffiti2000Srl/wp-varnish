@@ -8,14 +8,12 @@ require_once __DIR__ . '/../g2k-plugin/g2k-settings.php';
  * @property string[] server_ips
  */
 class WP_Varnish_Settings extends G2K_Settings {
-	const REQUIRED_CAPABILITY = 'administrator';
-
 	public function register_settings_pages() {
-		add_submenu_page('options-general.php', $this->_plugin->name . ' Settings', $this->_plugin->name, static::REQUIRED_CAPABILITY, $this->_plugin->prefix . '_settings', array($this, 'viewMainPage'));
+		add_submenu_page('options-general.php', $this->_plugin->name . ' Settings', $this->_plugin->name, $this->_plugin->capability, $this->_plugin->prefix . '_settings', array($this, 'viewMainPage'));
 	}
 
 	public function viewMainPage() {
-		if (current_user_can(static::REQUIRED_CAPABILITY)) {
+		if (current_user_can($this->_plugin->capability)) {
 			echo $this->_plugin->render_template('admin/settings/index.php');
 		} else {
 			wp_die('Access denied.');
@@ -23,7 +21,7 @@ class WP_Varnish_Settings extends G2K_Settings {
 	}
 
 	public function viewPurgePage() {
-		if (current_user_can(static::REQUIRED_CAPABILITY)) {
+		if (current_user_can($this->_plugin->capability)) {
 			echo $this->_plugin->render_template('admin/settings/purge.php');
 		} else {
 			wp_die('Access denied.');
