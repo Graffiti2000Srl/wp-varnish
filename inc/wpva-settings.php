@@ -2,15 +2,20 @@
 
 require_once __DIR__ . '/../g2k-plugin/g2k-settings.php';
 
+/**
+ * Class WP_Varnish_Settings
+ *
+ * @property array settings
+ */
 class WP_Varnish_Settings extends G2K_Settings {
 	const REQUIRED_CAPABILITY = 'administrator';
 
 	public function register_settings_pages() {
-		add_menu_page('WP Varnish', 'WP Varnish', static::REQUIRED_CAPABILITY, $this->_plugin->slug, array($this, 'viewSettingsMainPage'));
-		add_submenu_page($this->_plugin->slug, 'Selective Purge', 'Selective Purge', static::REQUIRED_CAPABILITY, $this->_plugin->slug . '-purge', array($this, 'viewSettingsPurgePage'));
+		add_menu_page('WP Varnish', 'WP Varnish', static::REQUIRED_CAPABILITY, $this->_plugin->prefix . '_settings', array($this, 'viewMainPage'));
+		add_submenu_page($this->_plugin->prefix . '_settings', 'Selective Purge', 'Selective Purge', static::REQUIRED_CAPABILITY, $this->_plugin->prefix . '_settings_purge', array($this, 'viewPurgePage'));
 	}
 
-	public function viewSettingsMainPage() {
+	public function viewMainPage() {
 		if (current_user_can(static::REQUIRED_CAPABILITY)) {
 			echo $this->_plugin->render_template('admin/settings/index.php');
 		} else {
@@ -18,7 +23,7 @@ class WP_Varnish_Settings extends G2K_Settings {
 		}
 	}
 
-	public function viewSettingsPurgePage() {
+	public function viewPurgePage() {
 		if (current_user_can(static::REQUIRED_CAPABILITY)) {
 			echo $this->_plugin->render_template('admin/settings/purge.php');
 		} else {
@@ -27,13 +32,26 @@ class WP_Varnish_Settings extends G2K_Settings {
 	}
 
 	public function register_settings() {
-		// TODO: Implement _register_settings() method.
+		add_settings_section($this->_plugin->prefix . '_section-server', 'Server Settings', array($this,  'viewSectionServer'), $this->_plugin->prefix . '_settings');
+		add_settings_field($this->_plugin->prefix . '_field-server-ip', 'Server IPs', array($this, 'viewTextField'), $this->_plugin->prefix . '_settings', $this->_plugin->prefix . '_section-server', array('label' => $this->_plugin->prefix . '_field-server-ip'));
+	}
+
+	public function viewSectionServer($section) {
+		echo $this->_plugin->render_template('admin/settings/section-header.php', array('section' => $section));
+	}
+
+	public function viewTextField($field) {
+		echo $this->_plugin->render_template('admin/settings/field-text.php', array('settings' => $this->settings, 'field' => $field));
 	}
 
 	/**
 	 * @return array
 	 */
 	protected function _get_default_settins() {
-		return array();
+		return array(
+			'server' => array(
+				'ip' => '',
+			),
+		);
 	}
 }
