@@ -9,6 +9,7 @@ class WP_Varnish extends G2K_Plugin {
 	public $slug = 'wp-varnish';
 	public $prefix = 'wpva';
 	public $version = '0.0.1';
+	public $capability = 'administrator';
 
 	/**
 	 * @var WP_Varnish_Settings
