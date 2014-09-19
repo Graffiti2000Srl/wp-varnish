@@ -19,7 +19,8 @@
 		</p>
 	</form>
 	<?php elseif ($active_tab === $this->prefix . '_purge') : ?>
-	<form method="post">
+	<form method="post" action="">
+		<?php wp_nonce_field($this->slug) ?>
 		<p>
 			Purge a URL: <input class="text" type="text" name="<?= $this->prefix ?>_purge_url" value="<?= get_bloginfo('url') . '/' ?>">
 			<input type="submit" class="button-primary" name="<?= $this->prefix ?>_purge" value="Purge">

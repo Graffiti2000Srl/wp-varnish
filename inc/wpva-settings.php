@@ -5,7 +5,8 @@ require_once __DIR__ . '/../g2k-plugin/g2k-settings.php';
 /**
  * Class WP_Varnish_Settings
  *
- * @property string[] server_ips
+ * @property string[]   server_ips
+ * @property WP_Varnish _plugin
  */
 class WP_Varnish_Settings extends G2K_Settings {
 	public function register_settings_pages() {
@@ -14,15 +15,9 @@ class WP_Varnish_Settings extends G2K_Settings {
 
 	public function viewMainPage() {
 		if (current_user_can($this->_plugin->capability)) {
-			echo $this->_plugin->render_template('admin/settings/index.php');
-		} else {
-			wp_die('Access denied.');
-		}
-	}
+			$this->_plugin->managePurge();
 
-	public function viewPurgePage() {
-		if (current_user_can($this->_plugin->capability)) {
-			echo $this->_plugin->render_template('admin/settings/purge.php');
+			echo $this->_plugin->render_template('admin/settings/index.php');
 		} else {
 			wp_die('Access denied.');
 		}
