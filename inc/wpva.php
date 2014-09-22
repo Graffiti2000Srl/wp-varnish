@@ -65,6 +65,9 @@ class WP_Varnish extends G2K_Plugin {
 			var_dump($errstr);
 		}
 
+		$buffer = fread($sock, 1024);
+		var_dump($buffer);
+
 		$out  = "BAN $url HTTP/1.0\r\n";
 		$out .= "Host: $host\r\n";
 		$out .= "User-Agent: WP-Varnish plugin\r\n";
