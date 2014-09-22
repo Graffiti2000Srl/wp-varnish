@@ -6,7 +6,7 @@ $value = '';
 switch ($field['label']) {
 	case 'wpva_field-server-ip':
 		$name .= '[server][ip]';
-		$value = $settings['server']['ip'];
+		$value = $settings['servers']['ip'];
 
 		break;
 }

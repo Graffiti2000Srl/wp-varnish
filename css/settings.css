@@ -1,0 +1,3 @@
+.wpva_table tbody tr:first-child input[type=button] {
+    display: none;
+}
