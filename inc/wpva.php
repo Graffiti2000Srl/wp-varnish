@@ -36,12 +36,17 @@ class WP_Varnish extends G2K_Plugin {
 			var_dump('2');
 		} elseif (isset($_REQUEST[$this->prefix . '_purge_url']) and isset($_GET['purge_url']) and check_admin_referer( $this->slug )) {
 			# Purge Url
-			var_dump('3');
+			$this->purgeUrl($_GET['purge_url']);
 		}
 	}
 
 	public function purgeAll() {
 		$this->_purge('/.*');
+	}
+
+	public function purgeUrl($url) {
+		$url = preg_replace( '#^https?://[^/]+#i', '', $url );
+		$this->_purge($url);
 	}
 
 	protected function _purge($url) {
@@ -59,14 +64,11 @@ class WP_Varnish extends G2K_Plugin {
 	}
 
 	protected function _purgeServer($url, $host, $server) {
-		$sock = fsockopen($server, 6082, $errno, $errstr, 5);
+		$sock = fsockopen($server, 80, $errno, $errstr, 5);
 		if (!$sock) {
-			var_dump($errno);
-			var_dump($errstr);
+			add_settings_error($this->slug, esc_attr('purged'), '[' . $server . '] <strong>ERROR</strong>: ' . $errstr . ' (' . $errno . ')');
+			return false;
 		}
-
-		$buffer = fread($sock, 1024);
-		var_dump($buffer);
 
 		$out  = "BAN $url HTTP/1.0\r\n";
 		$out .= "Host: $host\r\n";
@@ -74,6 +76,18 @@ class WP_Varnish extends G2K_Plugin {
 		$out .= "Connection: Close\r\n\r\n";
 
 		fwrite($sock, $out);
+
+		$buffer = fread($sock, 1024);
+		$bufferArray = explode("\n", $buffer);
+
 		fclose($sock);
+
+		if (preg_match('/200/', $bufferArray[0])) {
+			add_settings_error($this->slug, esc_attr('purged'), '[' . $server . '] Purging done right', 'updated');
+			return true;
+		} else {
+			add_settings_error($this->slug, esc_attr('purged'), '[' . $server . '] <strong>ERROR</strong>: Something went wrong <pre>' . $buffer . '</pre>');
+			return false;
+		}
 	}
 }

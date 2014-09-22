@@ -1,5 +1,6 @@
 <div class="wrap">
 	<div id="icon-options-general" class="icon32"><br /></div>
+	<?php settings_errors($this->slug) ?>
 	<h2><?php esc_html_e( $this->name ); ?> Settings</h2>
 
 	<?php $active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : $this->prefix . '_settings'; ?>
