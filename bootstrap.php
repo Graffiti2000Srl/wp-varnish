@@ -2,7 +2,9 @@
 
 /*
  * Plugin Name: Wp Varnish
- * Author: Graffiti2000
+ * Version: 0.0.1
+ * Author: <a href="http://graffiti.it">Graffiti2000</a>
+ * Description: A plugin for purging Varnish cache when content is published or edited.
  */
 
 if (!defined('ABSPATH')) {
