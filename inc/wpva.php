@@ -97,7 +97,7 @@ class WP_Varnish extends G2K_Plugin {
 			$buffer = fread($sock, 1024);
 
 			if(preg_match('/(\w+)\s+Authentication required./', $buffer, $matches)) {
-				fwrite($sock, 'auth' . $server['secret'] . "\n");
+				fwrite($sock, 'auth ' . $server['secret'] . "\n");
 				$buffer = fread($sock, 1024);
 
 				var_dump($buffer);
