@@ -65,6 +65,10 @@ class WP_Varnish extends G2K_Plugin {
 		return $this->_purge($url);
 	}
 
+	public function purgeFrontPage() {
+
+	}
+
 	protected function _purge($url) {
 		$servers = $this->_settings->servers;
 
@@ -94,10 +98,14 @@ class WP_Varnish extends G2K_Plugin {
 		$out .= "User-Agent: WP-Varnish plugin\r\n";
 		$out .= "Connection: Close\r\n\r\n";
 
+		$out = "ban req.url ~ ^$url$ && req.http.host == $host\n";
+
 		fwrite($sock, $out);
 
 		$buffer = fread($sock, 1024);
 		$bufferArray = explode("\n", $buffer);
+
+		var_dump($buffer);
 
 		fclose($sock);
 
