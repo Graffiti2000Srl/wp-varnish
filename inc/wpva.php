@@ -93,6 +93,17 @@ class WP_Varnish extends G2K_Plugin {
 			return false;
 		}
 
+		if ($server['admin'] === '1') {
+			$buffer = fread($sock, 1024);
+
+			if(preg_match('/(\w+)\s+Authentication required./', $buffer, $matches)) {
+				fwrite($sock, 'auth' . $server['secret'] . "\n");
+				$buffer = fread($sock, 1024);
+
+				var_dump($buffer);
+			}
+		}
+
 		$out  = "BAN $url HTTP/1.0\r\n";
 		$out .= "Host: $host\r\n";
 		$out .= "User-Agent: WP-Varnish plugin\r\n";
