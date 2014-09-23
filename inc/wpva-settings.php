@@ -63,8 +63,10 @@ class WP_Varnish_Settings extends G2K_Settings {
 		return array(
 			'servers' => array(
 				array(
-					'ip'   => '127.0.0.1',
-					'port' => '80',
+					'ip'     => '127.0.0.1',
+					'port'   => '80',
+					'admin'  => 0,
+					'secret' => '',
 				),
 			),
 			'rules' => array(
