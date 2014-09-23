@@ -1,4 +1,4 @@
-<form method="post" action="">
+<form method="post" action="options-general.php?page=<?= $this->prefix ?>_settings">
 	<?php wp_nonce_field($this->slug) ?>
 	<p>
 		Purge a URL: <input class="text" type="text" name="<?= $this->prefix ?>_purge_url" value="<?= get_bloginfo('url') . '/' ?>">
