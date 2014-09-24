@@ -11,6 +11,8 @@ class WP_Varnish extends G2K_Plugin {
 	public $version = '0.0.1';
 	public $capability = 'administrator';
 
+	const PATTERN_ARCHIVE = '(?:page/[\d]+/)?$';
+
 	/**
 	 * @var WP_Varnish_Settings
 	 */
@@ -33,12 +35,12 @@ class WP_Varnish extends G2K_Plugin {
 		if (isset($_REQUEST[$this->prefix . '_purge_all']) and check_admin_referer( $this->slug )) {
 			# Purge All
 			$success = $this->purgeAll();
-		} elseif (isset($_REQUEST[$this->prefix . '_purge_this']) and isset($_GET['post_id']) and check_admin_referer( $this->slug )) {
+		} elseif (isset($_REQUEST[$this->prefix . '_purge_this']) and isset($_GET['post_id'])/* and check_admin_referer( $this->slug )*/) {
 			# Purge Post
-			var_dump('2');
-		} elseif (isset($_REQUEST[$this->prefix . '_purge_url']) and isset($_GET['purge_url']) and check_admin_referer( $this->slug )) {
+			$success = $this->purgeTaxonomiesByPost($_GET['post_id']);
+		} elseif (isset($_REQUEST[$this->prefix . '_purge_url']) and isset($_REQUEST['purge_url']) and check_admin_referer( $this->slug )) {
 			# Purge Url
-			$success = $this->purgeUrl($_GET['purge_url']);
+			$success = $this->purgeUrl($_REQUEST['purge_url']);
 		} elseif (isset($_GET['purged'])) {
 			if ($_GET['purged'] === 'true') {
 				add_settings_error($this->slug, esc_attr('purged'), 'Purging done right', 'updated');
@@ -66,15 +68,44 @@ class WP_Varnish extends G2K_Plugin {
 	}
 
 	public function purgeFrontPage() {
+		$success = $this->_purge('/' . static::PATTERN_ARCHIVE);
 
+		if ( get_option('show_on_front', 'posts') == 'page' && intval(get_option('page_for_posts', 0)) > 0 ) {
+			$posts_page_url = preg_replace( '#^https?://[^/]+#i', '', get_permalink(intval(get_option('page_for_posts'))) );
+			$success &= $this->_purge( $posts_page_url . static::PATTERN_ARCHIVE );
+		}
+
+		return $success;
+	}
+
+	public function purgeFeed() {
+		return $this->_purge('/feed/(?:(atom|rdf)/)?$');
+	}
+
+	public function purgeTaxonomiesByPost($post_id) {
+		function mapName ($tax) {
+			return $tax->name;
+		}
+		function mapSlug ($tax) {
+			return $tax->rewrite->slug;
+		}
+
+		$taxObjects = get_taxonomies(array('show_ui' => true), 'objects');
+		$taxonomies = wp_get_post_terms($post_id, array_map("mapName", $taxObjects));
+
+		$slug = array();
+		$queries = array();
+
+		#TODO
+		return true;
 	}
 
 	protected function _purge($url) {
 		$servers = $this->_settings->servers;
 
-		$regex = '/^https?:\/\/([^\/]+)(.*)/i';
-		$host = preg_replace($regex, "$1", get_bloginfo('url'));
-		$siteurl = preg_replace($regex, "$2", get_bloginfo('url'));
+		$regex = '/^(https?:\/\/)([^\/]+)(.*)/i';
+		$host = preg_replace($regex, "$1$2", get_bloginfo('url'));
+		$siteurl = preg_replace($regex, "$3", get_bloginfo('url'));
 		$url = $siteurl . $url;
 
 		$success = true;
@@ -101,6 +132,8 @@ class WP_Varnish extends G2K_Plugin {
 				$buffer = fread($sock, 1024);
 
 				var_dump($buffer);
+
+				# TODO
 			}
 		}
 
@@ -109,14 +142,10 @@ class WP_Varnish extends G2K_Plugin {
 		$out .= "User-Agent: WP-Varnish plugin\r\n";
 		$out .= "Connection: Close\r\n\r\n";
 
-		$out = "ban req.url ~ ^$url$ && req.http.host == $host\n";
-
 		fwrite($sock, $out);
 
 		$buffer = fread($sock, 1024);
 		$bufferArray = explode("\n", $buffer);
-
-		var_dump($buffer);
 
 		fclose($sock);
 

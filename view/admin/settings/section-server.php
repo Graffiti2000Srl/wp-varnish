@@ -6,8 +6,10 @@
 		<tr>
 			<th>Server IP</th>
 			<th>Port</th>
+			<?php /*
 			<th>Use Admin?</th>
 			<th>Secret</th>
+            */ ?>
 			<th></th>
 		</tr>
 		</thead>
@@ -27,8 +29,10 @@
 			<tr>
 				<td><input id="<?= $this->prefix ?>_settings[servers][<?= $index ?>][ip]"     name="<?= $this->prefix ?>_settings[servers][<?= $index ?>][ip]"     class="regular-text" value="<?php esc_attr_e($server['ip']) ?>"></td>
 				<td><input id="<?= $this->prefix ?>_settings[servers][<?= $index ?>][port]"   name="<?= $this->prefix ?>_settings[servers][<?= $index ?>][port]"   class="regular-text" value="<?php esc_attr_e($server['port']) ?>" style="width: 5em;"></td>
+				<?php /*
 				<td><input id="<?= $this->prefix ?>_settings[servers][<?= $index ?>][admin]"  name="<?= $this->prefix ?>_settings[servers][<?= $index ?>][admin]"  type="checkbox"      value="1" <?= esc_attr__($server['admin']) == '1' ? ' checked' : '' ?>></td>
 				<td><input id="<?= $this->prefix ?>_settings[servers][<?= $index ?>][secret]" name="<?= $this->prefix ?>_settings[servers][<?= $index ?>][secret]" class="regular-text" value="<?php esc_attr_e($server['secret']) ?>"></td>
+                */ ?>
 				<td><input type="button" class="button-secondary" value="-"></td>
 			</tr>
 		<?php endforeach ?>
