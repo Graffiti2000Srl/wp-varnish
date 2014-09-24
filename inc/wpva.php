@@ -38,9 +38,9 @@ class WP_Varnish extends G2K_Plugin {
 		} elseif (isset($_REQUEST[$this->prefix . '_purge_this']) and isset($_GET['post_id'])/* and check_admin_referer( $this->slug )*/) {
 			# Purge Post
 			$success = $this->purgeTaxonomiesByPost($_GET['post_id']);
-		} elseif (isset($_REQUEST[$this->prefix . '_purge_url']) and isset($_REQUEST['purge_url']) and check_admin_referer( $this->slug )) {
+		} elseif (isset($_REQUEST[$this->prefix . '_purge_url']) and check_admin_referer( $this->slug )) {
 			# Purge Url
-			$success = $this->purgeUrl($_REQUEST['purge_url']);
+			$success = $this->purgeUrl($_REQUEST[$this->prefix . '_purge_url'] ?: $_SERVER['HTTP_REFERER']);
 		} elseif (isset($_GET['purged'])) {
 			if ($_GET['purged'] === 'true') {
 				add_settings_error($this->slug, esc_attr('purged'), 'Purging done right', 'updated');
@@ -48,14 +48,17 @@ class WP_Varnish extends G2K_Plugin {
 				add_settings_error($this->slug, esc_attr('purged'), '<strong>ERROR</strong>: An error accurred while purging. Please use the purge button in the "Purge" tab to show the error');
 			}
 
-			return;
+			return $_GET['purged'] === 'true';
 		} else {
-			return;
+			return $success;
 		}
 
 		if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 			wp_redirect(admin_url('options-general.php?page=' . $this->prefix . '_settings&purged=' . ($success ? 'true' : 'false')));
+			exit();
 		}
+
+		return $success;
 	}
 
 	public function purgeAll() {
@@ -104,7 +107,7 @@ class WP_Varnish extends G2K_Plugin {
 		$servers = $this->_settings->servers;
 
 		$regex = '/^(https?:\/\/)([^\/]+)(.*)/i';
-		$host = preg_replace($regex, "$1$2", get_bloginfo('url'));
+		$host = preg_replace($regex, "$2", get_bloginfo('url'));
 		$siteurl = preg_replace($regex, "$3", get_bloginfo('url'));
 		$url = $siteurl . $url;
 

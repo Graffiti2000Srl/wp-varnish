@@ -17,6 +17,15 @@ class WP_Varnish_Admin_Bar extends G2K_Admin_Bar {
 			'href'   => wp_nonce_url(admin_url('options-general.php?page=' . $this->_plugin->prefix . '_settings&amp;' . $this->_plugin->prefix . '_purge_all&amp;noheader=true'), $this->_plugin->slug),
 		));
 
+		if (!is_admin()) {
+			$wp_admin_bar->add_node(array(
+				'id'     => $this->_plugin->slug . '-purge-url',
+				'parent' => $this->_plugin->slug,
+				'title'  => 'Purge This Uri',
+				'href'   => wp_nonce_url(admin_url('options-general.php?page=' . $this->_plugin->prefix . '_settings&amp;noheader=true&amp;' . $this->_plugin->prefix . '_purge_url'), $this->_plugin->slug),
+			));
+		}
+
 		if ($post_id = static::_getPostID()) {
 			$wp_admin_bar->add_node(array(
 				'id'     => $this->_plugin->slug . '-purge-this',
