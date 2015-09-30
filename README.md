@@ -1,6 +1,6 @@
 wp-varnish
 ==========
 
-versione staging
+questa è la versione staging
 
 A Wordpress plugin to manage Varnish cache
