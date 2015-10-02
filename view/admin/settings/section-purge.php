@@ -5,7 +5,9 @@
 		<input type="submit" class="button-primary" name="<?= $this->prefix ?>_purge" value="Purge">
 	</p>
 
+	<?php if (isset($_GET['purge_btn'])) { ?>
 	<p class="submit">
 		<input type="submit" class="button-primary" name="<?= $this->prefix ?>_purge_all" value="Purge All Blog Cache"> Use only if necessary, and carefully as this will include a bit more load on varnish servers.
 	</p>
+	<?php } ?>
 </form>

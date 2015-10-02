@@ -26,7 +26,9 @@ class WP_Varnish extends G2K_Plugin {
 
 	public function __construct() {
 		$this->_settings = new WP_Varnish_Settings($this);
-		$this->_admin_bar = new WP_Varnish_Admin_Bar($this);
+		if (isset($_GET['purge_btn'])) {
+			$this->_admin_bar = new WP_Varnish_Admin_Bar($this);
+		}
 	}
 
 	public function managePurge() {
